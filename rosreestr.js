@@ -103,6 +103,7 @@ async function connectEGRN(driver) {
     await driver.wait(driver.findElements(By.css(SELECTOR_UNIQUE_EGRN_KEY)), WAIT_ELEM_LOAD_TIMEOUT);
     await driver.sleep(rndTimeoutMs(700, 1200));
     await driver.findElement(By.css(SELECTOR_UNIQUE_EGRN_KEY)).sendKeys(EGRN_KEY, Key.RETURN);
+    await driver.sleep(rndTimeoutMs(700, 1200));
   } catch (e) {
     console.error(e);
     throw(e);
@@ -113,7 +114,7 @@ async function findPropertyObjects(driver, sCadastrNumber) {
   try {
     // Ждем загрузки страницы и нажимаем на ссылку "Поиск объектов недвижимости"
     await driver.wait(driver.findElements(By.css(SELECTOR_LINK_FIND_PROPERTY_OBJECTS)), WAIT_ELEM_LOAD_TIMEOUT);
-    await driver.sleep(rndTimeoutMs(2500, 3000));
+    await driver.sleep(rndTimeoutMs(3500, 4000));
     await (await driver.findElement(By.css(SELECTOR_LINK_FIND_PROPERTY_OBJECTS))).click();
     return true;
   } catch (e) {
@@ -126,7 +127,7 @@ async function inputCadastralNumber(driver, sCadastrNumber) {
   try {
     // Ждем загрузку элементов и Вводим значение кадастрового номера и нажимаем Enter
     await driver.wait(driver.findElements(By.css(SELECTOR_INPUT_CADASTRAL_NUMBER)), WAIT_ELEM_LOAD_TIMEOUT);
-    await driver.sleep(rndTimeoutMs(2500, 3000));
+    await driver.sleep(rndTimeoutMs(3500, 4000));
     await driver.findElement(By.css(SELECTOR_INPUT_CADASTRAL_NUMBER)).sendKeys(sCadastrNumber, Key.RETURN);
     return true;
   } catch (e) {
@@ -140,7 +141,7 @@ async function inputRegion(driver) {
     // Вводим значения в поле Регион и нажимаем Enter
     await driver.sleep(rndTimeoutMs(700, 1200));
     await driver.findElement(By.css(SELECTOR_INPUT_REGION)).sendKeys(DATA_REGION);
-    await driver.sleep(rndTimeoutMs(1500, 2000));
+    await driver.sleep(rndTimeoutMs(1800, 2600));
     await driver.wait(driver.findElements(By.css(SELECTOR_CHOOSE_REGION)), WAIT_ELEM_LOAD_TIMEOUT);
     await driver.sleep(rndTimeoutMs(700, 1200));
     await (await driver.findElement(By.css(SELECTOR_CHOOSE_REGION))).click();
@@ -167,7 +168,7 @@ async function chooseCadastralNumber(driver) {
     // Ждем загрузки следующего элемента и выбираем кадастровую запись из списка
 
     await driver.wait(driver.findElements(By.css(SELECTOR_TABL_CADASTRAL_NUM)), WAIT_ELEM_LOAD_TIMEOUT);
-    await driver.sleep(rndTimeoutMs(2500, 3000));
+    await driver.sleep(rndTimeoutMs(3500, 4000));
     await (await driver.findElement(By.css(SELECTOR_TABL_CADASTRAL_NUM))).click();
     return true;
   } catch (e) {
@@ -180,7 +181,7 @@ async function waitCaptchaLoad(driver) {
   try {
     // Ждем загрузки Капчи и забираем ссылку картинку с капчей
     await driver.wait(driver.findElements(By.css(SELECTOR_IMG_CAPTCHA)), WAIT_ELEM_LOAD_TIMEOUT);
-    await driver.sleep(rndTimeoutMs(2000, 2500));
+    await driver.sleep(rndTimeoutMs(4000, 4500));
     let url = await driver.findElement(By.css(SELECTOR_IMG_CAPTCHA)).getAttribute('src');
     await driver.sleep(rndTimeoutMs(600, 1200));
 
@@ -207,7 +208,7 @@ async function startBrowserScript(driver, sUrl) {
 async function resolveCaptcha(driver) {
   try {
     // Подождем немного, чтобы наверняка.. И считаем атрибут data-mtt из тега <BODY>
-    await driver.sleep(rndTimeoutMs(2500, 3000));
+    await driver.sleep(rndTimeoutMs(3500, 4500));
     let captcha = await driver.findElement(By.css('body')).getAttribute('data-mtt');
 
     // Из строки картинки убираем начало, так как оно не нужно.
@@ -255,7 +256,7 @@ async function sendRequest(driver) {
 
     await (await driver.findElement(By.css(SELECTOR_BTN_SEND_REQUEST))).click();
 
-    await driver.sleep(rndTimeoutMs(2500, 3000));
+    await driver.sleep(rndTimeoutMs(3000, 4000));
 
     await checkIntervalMessage(driver);
 
@@ -279,6 +280,7 @@ async function pressFinishBtn(driver, sCadastrNumber) {
     await driver.wait(driver.findElements(By.css(SELECTOR_BTN_FINISH)), WAIT_ELEM_LOAD_TIMEOUT);
     await driver.sleep(rndTimeoutMs(2000, 2500));
     await (await driver.findElement(By.css(SELECTOR_BTN_FINISH))).click();
+    await driver.sleep(rndTimeoutMs(2000, 2500));
     return true;
   } catch (e) {
     console.error(e)
