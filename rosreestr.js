@@ -12,7 +12,7 @@ const Anticaptcha = require('anticaptcha2');
 const ImageToTextTask = Anticaptcha.ImageToTextTask;
 
 const sConfig = 'config.json';
-let oConfig = getConfig();
+let oConfig = getConfig(sConfig);
 
 const ANTICAPTCHA_KEY = oConfig.ANTICAPTCHA_KEY;
 const EGRN_KEY = oConfig.EGRN_KEY;
@@ -327,7 +327,7 @@ function removeFirstLineFromFile() {
   });
 }
 
-function getConfig() {
+function getConfig(sConfig) {
   let sFileData = fs.readFileSync(sConfig, 'utf-8');
   let oConfig = JSON.parse(sFileData.toString());
   return oConfig;
