@@ -21,6 +21,7 @@ const DATAFILE_NAME = oConfig.DATAFILE_NAME;
 const DONEFILE_NAME = oConfig.DONEFILE_NAME;
 const DATA_REGION = oConfig.DATA_REGION;
 const LOGFILE_NAME = oConfig.LOGFILE_NAME;
+const TIMEOUTFILE_NAME = oConfig.TIMEOUTFILE_NAME;
 
 let anticaptcha = new Anticaptcha(ANTICAPTCHA_KEY);
 
@@ -40,9 +41,11 @@ const SELECTOR_POPUP_INTERVAL_FOR_REQUEST = '.popupContent .v-label'; // Окн�
 
 const WAIT_ELEM_LOAD_TIMEOUT = 10000;
 
-let lastFinishedRequestDate;
 
-startProcess();
+let lastFinishedRequestDate = getNeededTimeout(TIMEOUTFILE_NAME);
+console.log(lastFinishedRequestDate);
+
+startProcess(getRequestTimeout());
 
 async function startProcess(timeout = 0) {
   try {
@@ -76,15 +79,12 @@ async function startProcess(timeout = 0) {
       await sendRequest(driver); // Отправляем запрос на Выписку
       await pressFinishBtn(driver, sCadastrNumber) // Завершаем обработку цикла. Нажимаем кнопку завершения.
       
-      await driver.sleep(rndTimeoutMs(280000, 285000)); // Таймаут в 5+ минут для ЕГРН
+      await driver.sleep(rndTimeoutMs(280000, 281000)); // Таймаут в 5+ минут для ЕГРН
     };
     await driver.quit();
   } catch (e) {
     console.error(e);
-    let neededTimeout = 0;
-    if (lastFinishedRequestDate) {
-      neededTimeout = 305000 - ((new Date()).getTime() - lastFinishedRequestDate);
-    }
+    let neededTimeout = getRequestTimeout();
     await driver.manage().deleteAllCookies();
     startProcess(neededTimeout);
   }
@@ -275,6 +275,7 @@ async function pressFinishBtn(driver, sCadastrNumber) {
     let reqId = await driver.wait(until.elementLocated(By.css('.v-label.v-label-tipFont.tipFont.v-label-undef-w b')), WAIT_ELEM_LOAD_TIMEOUT).getText()
 
     lastFinishedRequestDate = new Date();
+    fs.writeFile(TIMEOUTFILE_NAME, lastFinishedRequestDate.getTime(), (err) => { if (err) { throw err; } });
     doLog(`${format('dd.MM.yyyy hh:mm:ss', lastFinishedRequestDate)} : Запрос ${reqId} на ${sCadastrNumber} отправлен`);
 
     await driver.wait(driver.findElements(By.css(SELECTOR_BTN_FINISH)), WAIT_ELEM_LOAD_TIMEOUT);
@@ -342,4 +343,19 @@ function doLog(msg) {
     }
   })
 
+}
+
+function getNeededTimeout(TIMEOUTFILE_NAME) {
+  let lastFinishedRequestDate = fs.readFileSync(TIMEOUTFILE_NAME, 'utf-8');
+  lastFinishedRequestDate = parseInt(lastFinishedRequestDate.toString(), 10);
+  return lastFinishedRequestDate;
+}
+
+function getRequestTimeout() {
+  let neededTimeout = 0;
+  if (lastFinishedRequestDate) {
+    neededTimeout = 300000 - ((new Date()).getTime() - lastFinishedRequestDate);
+    neededdTimeout = neededTimeout < 0 ? 0 : neededTimeout;
+  }
+  return neededdTimeout;
 }
