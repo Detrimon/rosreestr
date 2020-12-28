@@ -43,7 +43,6 @@ const WAIT_ELEM_LOAD_TIMEOUT = 10000;
 
 
 let lastFinishedRequestDate = getNeededTimeout(TIMEOUTFILE_NAME);
-console.log(lastFinishedRequestDate);
 
 startProcess(getRequestTimeout());
 
@@ -357,5 +356,5 @@ function getRequestTimeout() {
     neededTimeout = 300000 - ((new Date()).getTime() - lastFinishedRequestDate);
     neededdTimeout = neededTimeout < 0 ? 0 : neededTimeout;
   }
-  return neededdTimeout;
+  return neededTimeout;
 }
